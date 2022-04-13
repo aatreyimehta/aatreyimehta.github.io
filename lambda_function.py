@@ -112,7 +112,7 @@ class ConfirmAppointmentIntent(AbstractRequestHandler):
         return ask_utils.is_intent_name("ConfirmAppointmentIntent")(handler_input)
         
     def handle(self, handler_input):
-        speak_output = "Your appointment has been scheduled."
+        speak_output = "Got it. Your appointment has been scheduled."
         
         return (
             handler_input.response_builder.speak(speak_output).response
