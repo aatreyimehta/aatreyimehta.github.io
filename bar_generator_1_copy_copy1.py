@@ -51,7 +51,7 @@ def generate_metadata(min_y = 0, max_y = 100):
     
     return {'x': x, 'y': y}
 
-
+#function sort_plots takes a list of plots and sorts them based on a specific order defined by the dictionary PLOT_ORDER
 def sort_plots(plots):
     for i in range(len(plots)):
         t = plots[i]
@@ -63,7 +63,9 @@ def sort_plots(plots):
             
         plots[i] = t
         PLOT_ORDER[str(i)] += 1
-            
+
+        
+#function generate_data generates a specified number of samples of data for plotting and returns 3 lists: data, metadata and circle_data        
 def generate_data(num_samples = 1):
     data = list()
     metadata = list()
@@ -107,22 +109,24 @@ def generate_data(num_samples = 1):
         
     return data, metadata, circle_data
 
+#function generate_marker_colors generates marker colors for bars in a plot
 def generate_marker_colors(num_groups, num_bars):
     one_color = np.random.randint(2) # Generate one color or different colors for bars
     
     # Avoid full black or full white
-    if num_groups > 1:
+    if num_groups > 1:   #if num_groups > 1, then it generates a list marker_colors of num_groups random colors and a list marker_colors_as_str of their string representations
         marker_colors = [(np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.round(np.random.uniform(0.5, 1), 2)) for i in range(num_groups)]
         marker_colors_as_str = ["rgba" + str(c) for c in marker_colors]  
-    elif one_color:
+    elif one_color:     #then it generates a single random color for all bars and its string representation
         marker_colors = (np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.round(np.random.uniform(0.5, 1), 2))
         marker_colors_as_str = "rgba" + str(marker_colors)
-    else:
+    else:      #then it generates a list marker_colors of num_bars random colors and a list marker_colors_as_str of their string representations
         marker_colors = [(np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.round(np.random.uniform(0.5, 1), 2)) for i in range(num_bars)]
         marker_colors_as_str = ["rgba" + str(c) for c in marker_colors]
         
     return marker_colors, marker_colors_as_str
 
+#compute_sizeref computes the sizeref value that will be used to set the size of markers in the plot
 def compute_sizeref(plot_size = 500, num_groups = 1, rangey = 100):
     width = (plot_size / rangey) / (num_groups * 2 - 1)
     return ((2.0 *  width)/((3 * width)**2))
@@ -135,6 +139,7 @@ def compute_scatter_width(plot_size = 500, num_groups = 1, num_bars = 20):
         width = 5.5
     return SIZEREFS[str(num_groups)] * (20.0 / num_bars)
 
+#generate_bar_widths generates the widths of the bars in a bar plot
 def generate_bar_widths(num_bars):
     one_width = np.random.randint(2) # Generate one width or different widths for bars
     if one_width:
@@ -170,6 +175,7 @@ def generate_plot_bgcolor():
     
     return bg_color, bg_color_rgba
 
+#generate random values for various plot attributes
 def generate_plot_paper_color():
     is_white = np.random.randint(2) # White or any color
     if is_white:
@@ -282,6 +288,7 @@ def generate_circle_bars(data):
     if num_groups == 3:
         return generate_circle_bars_three(data)
 
+#generate a dictionary of styles that can be used to customize the appearance of the bar chart
 def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
 
     (marker_colors, marker_colors_rgba) = generate_marker_colors(num_groups, num_bars)
@@ -313,7 +320,7 @@ def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
     
 
 #grid_dash=random.choice(open("grid.txt","r").readline().split())
-global_grid_probability = 1
+global_grid_probability = 1 #globally defining the grid probability 
 image_counter = 0
 
 # Draw source domain
@@ -321,25 +328,25 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
 
     global image_counter
 
-    linewidth = random.uniform(1,5)
+    linewidth = random.uniform(1,5)   #to make x  and y axis select the same random number for width between 1 and 5 while generating images
     
     alphabet = string.ascii_lowercase
     word = ''.join(random.choice(alphabet) for i in range(randint(2,3)))    
     
     fig = go.Figure()
 
-    for r in range(len(data["y_values"])):
-        fig.add_trace(go.Bar(y=data["x_values"],
-                        x=data["y_values"][r],
-                        orientation="h",
-                        width=0.7,
+    for r in range(len(data["y_values"])):       
+        fig.add_trace(go.Bar(y=data["x_values"],    #y parameters specify the vertical positions of the bars
+                        x=data["y_values"][r],      #x parameters specify the horizontal positions of the bars
+                        orientation="h",  #generates horizontal plots
+                        width=0.7,   #sets the width of bar
                         #orientation=random.choice(open("orientation.txt","r").readline().split()),
-                        name=word,
+                        name=word,       #name parameter sets the label for each group of bars, and it refers to word which generates values randomly
                         #name=random.choice(open("legend.txt","r").readline().split()),
                         marker_color=data["marker_colors_rgba"][r] if len(data["y_values"]) > 1 else data["marker_colors_rgba"],
-                        marker_line_width=2
+                        marker_line_width=2   #set the width of the border around the bars
                         ))
-    size=random.randint(19,23)
+    size=random.randint(19,23)  #randomly sets the size of x and y axis titles between 19 to 23
                                          
     fig.update_layout(
         margin=dict(l=5, r=25, t=30, b=25),
@@ -348,8 +355,8 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
         #title=random.choice(open("randomFile.txt","r").readline().split()),
         xaxis_range=[0,110],
         yaxis_range=[-0.5,10],
-        xaxis_title=random.choice(open("label.txt","r").readline().split()),
-        yaxis_title=random.choice(open("label.txt","r").readline().split()),
+        xaxis_title=random.choice(open("label.txt","r").readline().split()),   #title of x axis is randomly selected from file label.txt
+        yaxis_title=random.choice(open("label.txt","r").readline().split()),   #title of y axis is randomly selected from file label.txt
         xaxis_title_font=dict(size=size),
         yaxis_title_font=dict(size=size),
         #bargap=data["bargap"],
@@ -377,35 +384,35 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
     #fig.add_annotation(ax=-2.5, axref='x', ay=0, ayref='y', x=9.8, xref='x', y=0, yref='y', arrowwidth=random.randint(2,5), arrowhead=2)
     #fig.add_annotation(ax=15, axref='x', ay=0, ayref='y', x=0, xref='x', y=0, yref='y', arrowwidth=random.randint(2,5), arrowhead=2)
     
-    with open("x.txt","r") as f:
+    with open("x.txt","r") as f:        #x.txt has values for x anchor that decide the positioning of the legend
     	x_options = f.readline().split()
     
-    with open("y.txt","r") as f:
+    with open("y.txt","r") as f:        #y.txt has values for y anchor that decide the positioning of the legend
     	y_options = f.readline().split()
                    	
     fig.update_layout(legend=dict(
     	orientation=random.choice(open("orientation.txt","r").readline().split()),
     	
-    	font_family=random.choice(open("font.txt","r").readline().split()),
+    	font_family=random.choice(open("font.txt","r").readline().split()),  #randomly selects a font for every individual image from font.txt file
     	x=float(random.choice(x_options)),
     	y=float(random.choice(y_options))
     	#yanchor=random.choice(open("yanchor.txt","r").readline().split()),
     	#xanchor=random.choice(open("xanchor.txt","r").readline().split())
     ))
       
-    alphabet = string.ascii_lowercase
+    alphabet = string.ascii_lowercase   #picks a random string of alphabets from a to z
 
 
     ticktext = []
-    for i in range(10):
-    	word = ''.join(random.choice(alphabet) for i in range(3))
-    	ticktext.append(word)
+    for i in range(10):      
+    	word = ''.join(random.choice(alphabet) for i in range(3))  #uses string of alphabets picked above as the ticktext for graphs
+    	ticktext.append(word)     
           
     fig.update_layout(
     	yaxis = dict(
     	tickmode = 'array',
     	#tickvals = [20,40,60,80,100,120,140,160,180,200],
-    	tickvals = [0.1,1,2,3,4,5,6,7,8,9],
+    	tickvals = [0.1,1,2,3,4,5,6,7,8,9],   #decides tick positioning 
         ticktext = ticktext
     ))  
     
@@ -418,17 +425,17 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
     
     fig.update_layout(
     	font=dict(
-    		size=random.randint(13,22),
+    		size=random.randint(13,22),    #randomly picks a number between 13 to 22 for font size of the graphs
     		family=random.choice(open("font.txt","r").readline().split())
     		)
     	)
     	
     fig.update_layout(
-    	title_text=random.choice(open("randomFile.txt","r").readline().split()),
-    	title_x=random.uniform(0.0,0.9),
-    	title_font_size=random.randint(25,35),
-    	margin={'t':50, 'b':50, 'l':1}, #so that the whole title is visible
-    	title_font_family=random.choice(open("font.txt","r").readline().split())
+    	title_text=random.choice(open("randomFile.txt","r").readline().split()),  #generates title text by randomly selecting words from randomFile.txt
+    	title_x=random.uniform(0.0,0.9),   #positioning of the chart title
+    	title_font_size=random.randint(25,35),   #size of the title 
+    	margin={'t':50, 'b':50, 'l':1}, #for making the whole title is visible  
+    	title_font_family=random.choice(open("font.txt","r").readline().split())  #font style for the chart title
     		) 
     
     		    	
@@ -437,7 +444,7 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
     #plt.xlabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))
     #plt.ylabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))
     
-    if (image_counter % 5 == 4):
+    if (image_counter % 5 == 4):   #every 4th image, per 5 images should not have a grid(this is to produce 80% of images having grids)
     	draw_grid = False
     else:
     	draw_grid = random.random() < grid_probability
@@ -453,64 +460,10 @@ def write_source_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tic
 
     image_counter += 1      
 
-"""    
-    draw_grid = random.random() < grid_probability and image_counter % 5 != 0
-
-# Update the x-axes with or without gridlines
-    fig.update_xaxes(showgrid=False)
-    if draw_grid:
-        fig.update_xaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
-
-
-# Write the image to file
-    pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
-
-    image_counter += 1      
-   
-    draw_grid = random.random() < grid_probability and image_counter % 5 != 0
-
-# Update the x-axes with or without gridlines
-    fig.update_xaxes(showgrid=False)
-    if draw_grid:
-        fig.update_xaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
-
-
-# Write the image to file
-    pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
-
-    image_counter += 1      
-
-# Define the probability of drawing gridlines
-    grid_probability = 0.8
-
-# Determine whether to draw gridlines
-    draw_grid = random.random() < grid_probability
-
-# Update the x-axes with or without gridlines
-    fig.update_xaxes(showgrid=False)
-    if draw_grid:
-        with open("grid.txt","r") as f:
-        	griddashes = f.readline().split()
-        	griddash = random.choice(griddashes)
-        fig.update_xaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=griddash)
-
-# Write the image to file
-    pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
-
-    fig.update_xaxes(showgrid=False)
-    if draw_grid:
-        fig.update_xaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
-        #fig.update_xaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash= )
-    #elif plot_bgcolor == 'white':
-    	#fig.update_yaxes(showgris=True, gridcolor='#000000', gridwidth=1)
-
-    pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
-    #plt.show()
-"""
 #global_grid_probability = 1
-image_counter = 0
+image_counter = 0  #resetting the image counter
  
-#Draw target domain    
+#Draw target domain for channelwise model  
 def write_circle_target_data_1(data, filepath, figsize=(600, 512), draw_grid=False, tick_step=10, grid_probability=global_grid_probability):
 
     global image_counter
@@ -523,7 +476,7 @@ def write_circle_target_data_1(data, filepath, figsize=(600, 512), draw_grid=Fal
                         y=data[i][j]["x"][::n],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),        
             "sizemode":'diameter',
-            "sizeref": 0.82,
+            "sizeref": 0.82,     #decides size of the circles
                                  },
                         )) 
 
@@ -531,7 +484,7 @@ def write_circle_target_data_1(data, filepath, figsize=(600, 512), draw_grid=Fal
 
     fp_parts = filepath.rsplit(".", 1)
     fig.update_layout(
-        plot_bgcolor="white",
+        plot_bgcolor="white",   
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
         xaxis_range=[0,110],
@@ -543,9 +496,9 @@ def write_circle_target_data_1(data, filepath, figsize=(600, 512), draw_grid=Fal
         showlegend=False
     )   
     
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}_axes.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
+    pio.write_image(fig=fig, file=f"{fp_parts[0]}_axes.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])  #generates axes portion of target
     
-    draw_grid = random.random() < grid_probability and image_counter % 5 != 0
+    draw_grid = random.random() < grid_probability and image_counter % 5 != 0   #4th image per 5 images will not have grid
     
     # Update the y-axes with or without gridlines
     fig.update_xaxes(showgrid=False)
@@ -553,31 +506,17 @@ def write_circle_target_data_1(data, filepath, figsize=(600, 512), draw_grid=Fal
         fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
 
     fig.update_layout(yaxis={"linecolor": 'white'}, xaxis={"linecolor": 'white', "ticklen": 0, "tickwidth": 0})
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}_grids.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
+    pio.write_image(fig=fig, file=f"{fp_parts[0]}_grids.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])  #generates grids portion of target
 
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     fig.update_layout(xaxis={"showgrid":False})
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
+    pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])   #generates content portion of target
     
     image_counter += 1
     
-"""
-    if draw_grid:
-        #fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
-        fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
-        
-    fig.update_layout(yaxis={"linecolor": 'white'}, xaxis={"linecolor": 'white', "ticklen": 0, "tickwidth": 0})
-    fig.update_layout(yaxis={"showgrid":True})
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}_grids.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
-
-    fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
-    #fig.update_layout(yaxis={"showgrid":False})
-    fig.update_layout(xaxis={"showgrid":False})
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
-"""  
 #global_grid_probability = 1
-image_counter = 0
-    
+image_counter = 0   #resetting the image counter
+#Draw target domain for RGB Model    
 def write_circle_target_data1_1(data, filepath, figsize=(600, 512), draw_grid=False, tick_step=10, grid_probability=global_grid_probability):
 
     global image_counter
@@ -591,7 +530,7 @@ def write_circle_target_data1_1(data, filepath, figsize=(600, 512), draw_grid=Fa
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),    
                         #marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),     
             "sizemode":'diameter',
-            "sizeref": 0.82,
+            "sizeref": 0.82,     #decides size of the circles
                                  },
                         ))
                         
@@ -610,7 +549,7 @@ def write_circle_target_data1_1(data, filepath, figsize=(600, 512), draw_grid=Fa
         showlegend=False
     )  
     
-    # Always set draw_grid to False on the 1st, 6th, 11th, 16th, 21st, and so on images
+    # Always set draw_grid to False on the 4th, 9th, 14th, 19th, and so on images
     draw_grid = random.random() < grid_probability and image_counter % 5 != 1
 
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
@@ -618,25 +557,6 @@ def write_circle_target_data1_1(data, filepath, figsize=(600, 512), draw_grid=Fa
     	fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dot', gridwidth=1)
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     image_counter += 1    
-
-"""    
-    # Always set draw_grid to False on the 1st, 6th, 11th, 16th, 21st, and so on images
-    draw_grid = random.random() < grid_probability and image_counter % 5 != 1
-
-    fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
-    if draw_grid:
-    	fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dot', gridwidth=1)
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
-    image_counter += 1    
-
-    
- 
-    fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
-    if draw_grid:
-    	fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
-    pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
-"""
-
 
 
 # Convert data to numpy dataframe
