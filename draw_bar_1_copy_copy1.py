@@ -11,7 +11,7 @@ from bar_generator_1_copy_copy1 import generate_data, write_source_data_1, write
 from utils import postprocessing, maskgen
 
 NUM_SAMPLES = 1000  #number of samples generated with 512x700 image dimension
-P_grid = 0.4
+P_grid = 0.4  #grid probability
 
 os.makedirs("./data/source", exist_ok=True)  #directory for saving source images
 os.makedirs("./data/tactile", exist_ok=True)  #directory for saving channelwise target images
