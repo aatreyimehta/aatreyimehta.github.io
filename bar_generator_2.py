@@ -53,7 +53,7 @@ def generate_metadata(min_y = 0, max_y = 100):
 """
 def generate_metadata(min_y = 0, max_y = 100):
     num_bars = 5
-    x = list(range(1, num_bars*2, 2)) # Generate x values only for odd ticks
+    x = list(range(1, num_bars*2, 2)) # Generate x values only for odd ticks, to maintain appropriate bar gap
     
     num_groups = np.random.randint(low=1, high=1+1)
     
