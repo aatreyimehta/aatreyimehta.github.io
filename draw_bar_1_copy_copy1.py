@@ -10,12 +10,12 @@ from bar_generator_1_copy_copy1 import generate_data, write_source_data_1, write
 #from bar_generator import generate_data, write_source_data, write_circle_target_data, serialize_data
 from utils import postprocessing, maskgen
 
-NUM_SAMPLES = 1000
+NUM_SAMPLES = 1000  #number of samples generated with 512x700 image dimension
 P_grid = 0.4
 
-os.makedirs("./data/source", exist_ok=True)
-os.makedirs("./data/tactile", exist_ok=True)
-os.makedirs("./data/tactile1", exist_ok=True)
+os.makedirs("./data/source", exist_ok=True)  #directory for saving source images
+os.makedirs("./data/tactile", exist_ok=True)  #directory for saving channelwise target images
+os.makedirs("./data/tactile1", exist_ok=True)  #directory for saving RGB target images
 
 
 with tf.device('/device:GPU:0'):
@@ -28,7 +28,7 @@ with tf.device('/device:GPU:0'):
         #fig_size = random.choices([[512,512], [512,512], [512,512]], weights=[.5, .25, .25])[0]
         #fig_size = random.choices([[512,512], [512,512], [512,512]], weights=[.5, .25, .25])[0]
         fig_size = [512,512]
-        fig_size1 = random.choices([[512,700], [512,700], [512,700]], weights=[.25, .5, .5])[0]
+        fig_size1 = random.choices([[512,700], [512,700], [512,700]], weights=[.25, .5, .5])[0]    #image dimension in affect
         fig_size2 = random.choices([[1024,512], [1024,512], [1024,512]], weights=[.5, .25, .25])[0]
         fig_size3 = random.choices([[760,512], [760,512], [760,512]], weights=[.5, .25, .25])[0]
         fig_size_elongated = random.choices([[512,1024], [512,1024], [512,1024]], weights=[.5, .25, .25])[0]
@@ -36,16 +36,16 @@ with tf.device('/device:GPU:0'):
         draw_grid = random.random() < P_grid
         tick_step = random.randint(10, 16)
 
-        write_source_data_1(data[i], f"./data/source/s_{i+3001}.png", fig_size1, draw_grid, tick_step)
+        write_source_data_1(data[i], f"./data/source/s_{i+3001}.png", fig_size1, draw_grid, tick_step)   #path for source images
         postprocessing(f"./data/source/s_{i+3001}.png")
         
-        write_circle_target_data_1(circle_data[i], f"./data/tactile/t_{i+3001}.png", fig_size1, draw_grid, tick_step)
+        write_circle_target_data_1(circle_data[i], f"./data/tactile/t_{i+3001}.png", fig_size1, draw_grid, tick_step)   #path for channelwise target images
         maskgen(f"./data/tactile/t_{i+3001}.png")
         
         #write_circle_target_data0(circle_data[i], f"./data/tactile/t_{i+5001}.png", fig_size1, draw_grid, tick_step)
         #maskgen(f"./data/tactile/t_{i+5001}.png")
         
-        write_circle_target_data1_1(circle_data[i], f"./data/tactile1/t_{i+3001}.png", fig_size1, draw_grid, tick_step)
+        write_circle_target_data1_1(circle_data[i], f"./data/tactile1/t_{i+3001}.png", fig_size1, draw_grid, tick_step)   #path for RGB target images
         print(f"./data/tactile1/t_{i+3001}.png")
         
 """           
