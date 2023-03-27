@@ -449,7 +449,7 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
 
-    
+#Plotting channelwise target images for 512x512 image dimension    
 def write_circle_target_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -458,7 +458,7 @@ def write_circle_target_data(data, filepath, figsize=(512, 512), draw_grid=False
                         y=data[i][j]["y"],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),          
             "sizemode":'diameter',
-            "sizeref": 1,
+            "sizeref": 1,   #size reference for 512x512 images
                                  },
                         ))
 
@@ -470,24 +470,29 @@ def write_circle_target_data(data, filepath, figsize=(512, 512), draw_grid=False
         plot_bgcolor="white",
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
+        yaxis_range=[0,110],   #range of y axis
+        xaxis_range=[-0.5,10],   #range of x axis
+        #setting x and y axis parameters 
         xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black'},
         yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": tick_step, "ticklen": 10, "tickwidth": 2},
         showlegend=False
     )    
+    #saving the axes part as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_axes.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
+    #defining grid properties for when grids are produced
     if draw_grid:
         fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
     fig.update_layout(xaxis={"linecolor": 'white'}, yaxis={"linecolor": 'white', "ticklen": 0, "tickwidth": 0})
+    #saving the grid part as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_grids.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     fig.update_layout(yaxis={"showgrid":False})
+    #saving the bar content an an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-
+#Plotting target images for RGB model 
 def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -496,7 +501,7 @@ def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=Fals
                         y=data[i][j]["y"],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),          
             "sizemode":'diameter',
-            "sizeref": 1,
+            "sizeref": 1,   #size reference for 512x512 image dimension
                                  },
                         ))
                                              
@@ -508,8 +513,9 @@ def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=Fals
         plot_bgcolor="white",
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
+        yaxis_range=[0,110],   #setting same y axis range as source for the target images
+        xaxis_range=[-0.5,10],   #setting same x axis range as source for the target images
+        #setting axis properties for x and y axis
         xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black'},
         yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": tick_step, "ticklen": 0, "tickwidth": 0, "ticklen": 10, "tickwidth": 2, "showgrid":False},
         showlegend=False
@@ -519,10 +525,12 @@ def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=Fals
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     if draw_grid:
     	fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dot', gridwidth=1)
+        
+    #saving the rgb/grayscale output as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
 
-# Draw source domain
+#Plotting source domain for 1024x512 image dimension for vertical barcharts(all the source properties remain the same as 512x512 image dimension, except for size reference for target images)
 def write_source_data_elongated(data, filepath, figsize=(1024, 512), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
@@ -620,18 +628,18 @@ def write_source_data_elongated(data, filepath, figsize=(1024, 512), draw_grid=F
     #plt.show()
 
  
-
+#Plotting channelwise target image for 1024x512 image dimension i.e. 2:1 ratio
 def write_circle_target_data_elongated(data, filepath, figsize=(1024, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
         for j in range(len(data[i])):
-            n = 2 # change this value to control the number of markers
+            n = 2   #this decreases the number of markers(circles) for the plot to maintain appropriate spacing between markers(circles)
 
             fig.add_trace(go.Scatter(x=data[i][j]["x"][::n],
                         y=data[i][j]["y"][::n],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),      
                         "sizemode":'diameter',
-                        "sizeref": 0.35,
+                        "sizeref": 0.35,   #decreasing the size reference so as to increase the marker size for scatter plots  
                                  },
                         ))
                
@@ -661,7 +669,7 @@ def write_circle_target_data_elongated(data, filepath, figsize=(1024, 512), draw
     fig.update_layout(yaxis={"showgrid":False})
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-
+#Plotting rgb/grayscale target image for 1024x512 image dimension
 def write_circle_target_data1_elongated(data, filepath, figsize=(1024, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -700,6 +708,7 @@ def write_circle_target_data1_elongated(data, filepath, figsize=(1024, 512), dra
     	fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dot', gridwidth=1)
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
+#Plotting source images for 760x512 image dimension i.e. 1.5:1 ratio(all the source properties remain the same as 512x512 image dimension, except for size reference for target images) 
 def write_source_data_1(data, filepath, figsize=(760, 512), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
@@ -814,7 +823,7 @@ def write_source_data_1(data, filepath, figsize=(760, 512), draw_grid=False, tic
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
 
-    
+#Plotting channelwise target images for 760x512 image dimension    
 def write_circle_target_data_1(data, filepath, figsize=(760, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -852,7 +861,7 @@ def write_circle_target_data_1(data, filepath, figsize=(760, 512), draw_grid=Fal
     fig.update_layout(yaxis={"showgrid":False})
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-
+#Plotting grayscale/rgb target images for 760x512 image dimension  
 def write_circle_target_data1_1(data, filepath, figsize=(760, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
