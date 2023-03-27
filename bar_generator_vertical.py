@@ -1,7 +1,7 @@
 # !pip install retrying
 # !pip install kaleido
 # !pip install plotly==5.8
-
+#importing python packages to begin with
 import os
 import shutil
 import random
@@ -36,6 +36,7 @@ MIN_Y = 0
 PLOT_ORDER = {"0": 0, "1": 0, "2": 0}
 SIZEREFS = {"1": 7.0, "2": 2.5 , "3": 2.0}
 
+#generating random data used to plot bar charts
 def generate_metadata(min_y = 0, max_y = 100):
     num_bars = 10 # np.random.randint(low=3, high=20+1) # Generate random number for number of bars, min: 3, max: 20
     x = list(range(num_bars))
@@ -51,6 +52,7 @@ def generate_metadata(min_y = 0, max_y = 100):
     
     return {'x': x, 'y': y}
 
+#sorting the arrays in either ascending or descending order based on value of PLOT_ORDER
 def sort_plots(plots):
     for i in range(len(plots)):
         t = plots[i]
@@ -62,7 +64,8 @@ def sort_plots(plots):
             
         plots[i] = t
         PLOT_ORDER[str(i)] += 1
-            
+
+#generating data for various samples of bar charts
 def generate_data(num_samples = 1):
     data = list()
     metadata = list()
@@ -106,11 +109,12 @@ def generate_data(num_samples = 1):
         
     return data, metadata, circle_data
 
+#generating marker colors for bars in a bar chart
 def generate_marker_colors(num_groups, num_bars):
     one_color = np.random.randint(2) # Generate one color or different colors for bars
     
     # Avoid full black or full white
-    if num_groups > 1:
+    if num_groups > 1:   #if num_groups > 1, it generates num_groups of distinct colors
         marker_colors = [(np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.round(np.random.uniform(0.5, 1), 2)) for i in range(num_groups)]
         marker_colors_as_str = ["rgba" + str(c) for c in marker_colors]  
     elif one_color:
@@ -122,10 +126,12 @@ def generate_marker_colors(num_groups, num_bars):
         
     return marker_colors, marker_colors_as_str
 
+#computing the reference size for markers in a bar chart depending on the size of the plot and the range of the y-axis values
 def compute_sizeref(plot_size = 500, num_groups = 1, rangey = 100):
     width = (plot_size / rangey) / (num_groups * 2 - 1)
     return ((2.0 *  width)/((3 * width)**2))
 
+#computing the width of scatter markers(circles) to be used for the scatter plots
 def compute_scatter_width(plot_size = 500, num_groups = 1, num_bars = 20):
     div = 4 if num_groups == 2 else 3
     temp_width = (plot_size / (((num_bars - 1) * (num_groups + (num_groups / div))) + num_groups)) / num_groups
@@ -134,6 +140,7 @@ def compute_scatter_width(plot_size = 500, num_groups = 1, num_bars = 20):
         width = 5.5
     return SIZEREFS[str(num_groups)] * (20.0 / num_bars)
 
+#generating random bar widths for given number of bars
 def generate_bar_widths(num_bars):
     one_width = np.random.randint(2) # Generate one width or different widths for bars
     if one_width:
@@ -142,12 +149,15 @@ def generate_bar_widths(num_bars):
         widths = np.random.uniform(low = 0.1, high = 1, size=num_bars)
     return widths
 
+#generating appropriate bar gaps
 def generate_bar_gap():
     return np.round(np.random.uniform(0, 0.3), 2)
 
+#generating appropriate gaps between bar groups
 def generate_bar_group_gap():
     return np.round(np.random.uniform(0, 0.3), 2)
 
+#generating starting tick and size for both the x and y axis in a plot
 def generate_tick_size(min, max):
     if min <= 0:
         start = 0
@@ -158,6 +168,7 @@ def generate_tick_size(min, max):
     size = np.round((max - min) / np.random.randint(2, 20 + 1), 2)
     return start, size
 
+#generating background color for the plot
 def generate_plot_bgcolor():
     is_white = np.random.randint(2) # White or any color
     if is_white:
@@ -169,6 +180,7 @@ def generate_plot_bgcolor():
     
     return bg_color, bg_color_rgba
 
+#generating paper color for the plot
 def generate_plot_paper_color():
     is_white = np.random.randint(2) # White or any color
     if is_white:
@@ -180,7 +192,7 @@ def generate_plot_paper_color():
     
     return paper_color, paper_color_rgba
 
-# Genere points for circle bar chart
+#generating points for circle bar chart with a single color
 def generate_circle_bars_one(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
@@ -213,7 +225,7 @@ def generate_circle_bars_one(data):
         
     return group_points
 
-def generate_circle_bars_two(data):
+#generating points for circle bar chart with two colors
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
     width  = 11.5 # compute_scatter_width(num_groups = num_groups, num_bars = num_bars)
@@ -242,6 +254,7 @@ def generate_circle_bars_two(data):
         
     return group_points
 
+#generating points for circle bar chart with three colors
 def generate_circle_bars_three(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
@@ -281,6 +294,7 @@ def generate_circle_bars(data):
     if num_groups == 3:
         return generate_circle_bars_three(data)
 
+#generating styles like the color of the plot, the tick sizes for the axis and the bar gaps
 def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
     (marker_colors, marker_colors_rgba) = generate_marker_colors(num_groups, num_bars)
     (plot_bg_color, plot_bg_color_rgba) = generate_plot_bgcolor()
@@ -308,15 +322,17 @@ def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
     
     return styles
 
-# Draw source domain
+#Plotting the source domain(vertical barcharts) for 512x512 image dimension
 def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_step=10):
 
-    linewidth = random.uniform(1,5)
+    linewidth = random.uniform(1,5)   #generating linewidth of random thickness for every image
     fig = go.Figure()
 
+    #initializing word, that selects random string of alphabets every time
     alphabet = string.ascii_lowercase
     word = ''.join(random.choice(alphabet) for i in range(randint(2,3)))
 
+    #setting the x and y values for vertical barchart, that will be exactly reverse as that of horizontal barcharts
     for r in range(len(data["y_values"])):
         fig.add_trace(go.Bar(x=data["x_values"],
                         y=data["y_values"][r],
@@ -332,19 +348,21 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
         plot_bgcolor=data["plot_bg_color_rgba"],
         width=figsize[0], height=figsize[1],
         #title=random.choice(open("randomFile.txt","r").readline().split()),
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
-        xaxis_title=random.choice(open("label.txt","r").readline().split()),
-        yaxis_title=random.choice(open("label.txt","r").readline().split()),
+        yaxis_range=[0,110],   #range for y axis
+        xaxis_range=[-0.5,10],    #range for x axis
+        xaxis_title=random.choice(open("label.txt","r").readline().split()),   #randomly selecting a word from file label.txt for xaxis title
+        yaxis_title=random.choice(open("label.txt","r").readline().split()),   #randomly selecting a word from file label.txt for yaxis title
         bargap=data["bargap"],
         bargroupgap=data["bargroupgap"],
         showlegend=True,
+        #setting properties for x axis
         xaxis={
                 "showline": True, 
                 #"linewidth": (randint(1,5)), 
                 "linewidth": linewidth,
                 "linecolor": 'black',
             },
+         #setting properties for y axis
         yaxis={
                 "showline": True, 
                 #"linewidth": (randint(1,5)), 
@@ -363,12 +381,13 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     
     with open("y.txt","r") as f:
     	y_options = f.readline().split()
-                   	
+    
+    #layout for legend
     fig.update_layout(legend=dict(
-    	orientation=random.choice(open("orientation.txt","r").readline().split()),
-    	font_family=random.choice(open("font.txt","r").readline().split()),
-    	x=float(random.choice(x_options)),
-    	y=float(random.choice(y_options))
+    	orientation=random.choice(open("orientation.txt","r").readline().split()),   #randomly selecting an orientation from file orientation.txt
+    	font_family=random.choice(open("font.txt","r").readline().split()),   #randomly selecting a font from file font.txt for the plot
+    	x=float(random.choice(x_options)),   #selects an x anchor positioning for legend from file x.txt
+    	y=float(random.choice(y_options))   #selects a y anchor positioning for legend from file x.txt
     	#yanchor=random.choice(open("yanchor.txt","r").readline().split()),
     	#xanchor=random.choice(open("xanchor.txt","r").readline().split())
     ))
@@ -376,7 +395,7 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     
     alphabet = string.ascii_lowercase
 
-    ticktext = []
+    ticktext = []   #initializing tick text for ticks
     for i in range(10):
     	word = ''.join(random.choice(alphabet) for i in range(randint(2,3)))
     	ticktext.append(word)
@@ -384,9 +403,9 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     fig.update_layout(
     	xaxis = dict(
     	tickmode = 'array',
-    	tickvals = [0,1,2,3,4,5,6,7,8,9],
+    	tickvals = [0,1,2,3,4,5,6,7,8,9],  #positions of the tick step
     	#tickvals = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],
-    	ticktext = ticktext,
+    	ticktext = ticktext,   #selecting random strings of alphabets by referring to the ticktext defined before fig.update_layout()
         #ticktext =[random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()),]
     ))  
     #df = px.data.tips()     
@@ -398,16 +417,17 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     
     fig.update_layout(
     	font=dict(
-    		size=random.randint(13,22),
-    		family=random.choice(open("font.txt","r").readline().split())
+    		size=random.randint(13,22),   #selecting random size for fonts for the plots
+    		family=random.choice(open("font.txt","r").readline().split())   #selecting random font family for the plot from font.txt
     		)
     	)
-    	
+    
+    #layout for the chart title
     fig.update_layout(
-    	title_text=random.choice(open("randomFile.txt","r").readline().split()),
+    	title_text=random.choice(open("randomFile.txt","r").readline().split()),   #chart title is selected randomly from randomFile.txt
     	title_x=random.uniform(0.0,0.9),
-    	title_font_size=random.randint(25,35),
-    	margin={'t':50, 'b':50, 'l':1}, #so that the whole title is visible
+    	title_font_size=random.randint(25,35),   #size of title font
+    	margin={'t':50, 'b':50, 'l':1},   #adjusted so that the whole title is visible
     	title_font_family=random.choice(open("font.txt","r").readline().split())
     		) 
     
@@ -418,12 +438,14 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     #plt.ylabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))  
 
 
+    #properties to be included if grids are produced
     fig.update_yaxes(showgrid=False)
     if draw_grid:
         fig.update_yaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
     #elif plot_bgcolor == 'white':
     	#fig.update_yaxes(showgris=True, gridcolor='#000000', gridwidth=1)
 
+    #saving the plot as an image file
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
 
