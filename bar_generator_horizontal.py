@@ -530,7 +530,7 @@ def write_circle_target_data(data, filepath, figsize=(512, 512), draw_grid=False
     #saving the bar content an an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-#Plotting target image for RGB model   
+#Plotting target images for RGB model   
 def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -551,10 +551,9 @@ def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=Fals
         plot_bgcolor="white",
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
-        xaxis_range=[-0.5,110],
-        yaxis_range=[-0.5,10],
-        #yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "tickmode": "array","tickvals": list(range(num_ticks)),},
-        #xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": 110 / (num_ticks), "ticklen": 10, "tickwidth": 2, "showgrid":False},
+        xaxis_range=[-0.5,110],   #setting same x axis range as source for the target images
+        yaxis_range=[-0.5,10],    #setting same y axis range as source for the target images
+        #setting axis properties for x and y axis
         yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black'},
         xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": tick_step, "ticklen": 0, "tickwidth": 0, "ticklen": 10, "tickwidth": 2, "showgrid":False},
         showlegend=False
@@ -562,10 +561,11 @@ def write_circle_target_data1(data, filepath, figsize=(512, 512), draw_grid=Fals
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     if draw_grid:
     	fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
+    #saving the rgb/grayscale output as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
 
-# Draw source domain
+#Plotting source domain for 512x1024 image dimension for horizontal barcharts(all the source properties remain the same as 512x512 image dimension, except for size reference for target images)
 def write_source_data_elongated(data, filepath, figsize=(512,1024), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
@@ -632,7 +632,6 @@ def write_source_data_elongated(data, filepath, figsize=(512,1024), draw_grid=Fa
     fig.update_layout(
     	yaxis = dict(
     	tickmode = 'array',
-    	#tickvals = [20,40,60,80,100,120,140,160,180,200],
     	tickvals = [0.1,1,2,3,4,5,6,7,8,9],
         ticktext =[random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split())]
     ))  
@@ -676,19 +675,18 @@ def write_source_data_elongated(data, filepath, figsize=(512,1024), draw_grid=Fa
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
     
-
- 
+#Plotting channelwise target image for 512x1024 image dimension i.e. 1:2 ratio
 def write_circle_target_data_elongated(data, filepath, figsize=(512,1024), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
         for j in range(len(data[i])):                              
-            n = 2
+            n = 2      #this decreases the number of markers(circles) for the plot to maintain appropriate spacing between markers(circles)
               
             fig.add_trace(go.Scatter(x=data[i][j]["y"][::n],
                         y=data[i][j]["x"][::n],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),        
             "sizemode":'diameter',
-            "sizeref": 0.35,
+            "sizeref": 0.35,    #decreasing the size reference so as to increase the marker size for scatter plots
                                  },
                         )) 
 
@@ -724,19 +722,19 @@ def write_circle_target_data_elongated(data, filepath, figsize=(512,1024), draw_
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
     
-    
+#Plotting rgb/grayscale target image for 512x1024 image dimension   
 def write_circle_target_data1_elongated(data, filepath, figsize=(512,1024), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
         for j in range(len(data[i])):
-            n = 2
+            n = 2    #this decreases the number of markers(circles) for the plot to maintain appropriate spacing between markers(circles)
             
             fig.add_trace(go.Scatter(x=data[i][j]["y"][::n],
                         y=data[i][j]["x"][::n],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),    
                         #marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),     
             "sizemode":'diameter',
-            "sizeref": 0.35,
+            "sizeref": 0.35,     #decreasing the size reference so as to increase the marker size for scatter plots
                                  },
                         ))
                         
@@ -762,7 +760,7 @@ def write_circle_target_data1_elongated(data, filepath, figsize=(512,1024), draw
     	fig.update_xaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
-
+#Plotting source images for 512x700 image dimension i.e. 1:1.5 ratio(all the source properties remain the same as 512x512 image dimension, except for size reference for target images) 
 def write_source_data_1(data, filepath, figsize=(512,700), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
@@ -889,8 +887,7 @@ def write_source_data_1(data, filepath, figsize=(512,700), draw_grid=False, tick
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
     
-
- 
+#Plotting channelwise target images for 512x700 image dimension
 def write_circle_target_data_1(data, filepath, figsize=(512,700), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -901,7 +898,7 @@ def write_circle_target_data_1(data, filepath, figsize=(512,700), draw_grid=Fals
                         y=data[i][j]["x"][::n],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),        
             "sizemode":'diameter',
-            "sizeref": 0.82,
+            "sizeref": 0.82,    #size reference for 512x700 dimension
                                  },
                         )) 
 
@@ -936,8 +933,7 @@ def write_circle_target_data_1(data, filepath, figsize=(512,700), draw_grid=Fals
     fig.update_layout(xaxis={"showgrid":False})
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-    
-    
+#Plotting grayscale/rgb target images for 512x700 image dimension   
 def write_circle_target_data1_1(data, filepath, figsize=(512,700), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -949,7 +945,7 @@ def write_circle_target_data1_1(data, filepath, figsize=(512,700), draw_grid=Fal
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[0]/figsize[1]),    
                         #marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),     
             "sizemode":'diameter',
-            "sizeref": 0.82,
+            "sizeref": 0.82,     #size reference for 512x700 image dimension
                                  },
                         ))
                         
