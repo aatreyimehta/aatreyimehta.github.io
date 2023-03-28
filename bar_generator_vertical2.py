@@ -2,6 +2,7 @@
 # !pip install kaleido
 # !pip install plotly==5.8
 
+#importing python packages to begin with
 import os
 import shutil
 import random
@@ -36,9 +37,10 @@ MIN_Y = 0
 PLOT_ORDER = {"0": 0, "1": 0, "2": 0}
 SIZEREFS = {"1": 7.0, "2": 2.5 , "3": 2.0}
 
+#generating random data used to plot bar charts
 def generate_metadata(min_y = 0, max_y = 100):
     num_bars = 5
-    x = list(range(1, num_bars*2, 2)) # Generate x values only for odd ticks
+    x = list(range(1, num_bars*2, 2)) # Generate x values only for odd ticks to maintain bar gaps for tall and narrow width bar charts
     
     num_groups = np.random.randint(low=1, high=1+1)
     
@@ -50,7 +52,7 @@ def generate_metadata(min_y = 0, max_y = 100):
     
     return {'x': x, 'y': y}
 
-
+#sorting the arrays in either ascending or descending order based on value of PLOT_ORDER
 def sort_plots(plots):
     for i in range(len(plots)):
         t = plots[i]
@@ -62,7 +64,8 @@ def sort_plots(plots):
             
         plots[i] = t
         PLOT_ORDER[str(i)] += 1
-            
+ 
+#generating data for various samples of bar charts
 def generate_data(num_samples = 1):
     data = list()
     metadata = list()
@@ -106,11 +109,12 @@ def generate_data(num_samples = 1):
         
     return data, metadata, circle_data
 
+#generating marker colors for bars in a bar chart
 def generate_marker_colors(num_groups, num_bars):
     one_color = np.random.randint(2) # Generate one color or different colors for bars
     
     # Avoid full black or full white
-    if num_groups > 1:
+    if num_groups > 1:   #if num_groups > 1, it generates num_groups of distinct colors
         marker_colors = [(np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.random.randint(low=1, high=255), np.round(np.random.uniform(0.5, 1), 2)) for i in range(num_groups)]
         marker_colors_as_str = ["rgba" + str(c) for c in marker_colors]  
     elif one_color:
@@ -122,10 +126,12 @@ def generate_marker_colors(num_groups, num_bars):
         
     return marker_colors, marker_colors_as_str
 
+#computing the reference size for markers in a bar chart depending on the size of the plot and the range of the y-axis values
 def compute_sizeref(plot_size = 500, num_groups = 1, rangey = 100):
     width = (plot_size / rangey) / (num_groups * 2 - 1)
     return ((2.0 *  width)/((3 * width)**2))
 
+#computing the width of scatter markers(circles) to be used for the scatter plots
 def compute_scatter_width(plot_size = 500, num_groups = 1, num_bars = 20):
     div = 4 if num_groups == 2 else 3
     temp_width = (plot_size / (((num_bars - 1) * (num_groups + (num_groups / div))) + num_groups)) / num_groups
@@ -134,6 +140,7 @@ def compute_scatter_width(plot_size = 500, num_groups = 1, num_bars = 20):
         width = 5.5
     return SIZEREFS[str(num_groups)] * (20.0 / num_bars)
 
+#generating random bar widths for given number of bars
 def generate_bar_widths(num_bars):
     one_width = np.random.randint(2) # Generate one width or different widths for bars
     if one_width:
@@ -142,12 +149,15 @@ def generate_bar_widths(num_bars):
         widths = np.random.uniform(low = 0.1, high = 1, size=num_bars)
     return widths
 
+#generating appropriate bar gaps
 def generate_bar_gap():
     return np.round(np.random.uniform(0, 0.3), 2)
 
+#generating appropriate gaps between bar groups
 def generate_bar_group_gap():
     return np.round(np.random.uniform(0, 0.3), 2)
 
+#generating starting tick and size for both the x and y axis in a plot
 def generate_tick_size(min, max):
     if min <= 0:
         start = 0
@@ -158,6 +168,7 @@ def generate_tick_size(min, max):
     size = np.round((max - min) / np.random.randint(2, 20 + 1), 2)
     return start, size
 
+#generating background color for the plot
 def generate_plot_bgcolor():
     is_white = np.random.randint(2) # White or any color
     if is_white:
@@ -169,6 +180,7 @@ def generate_plot_bgcolor():
     
     return bg_color, bg_color_rgba
 
+#generating paper color for the plot
 def generate_plot_paper_color():
     is_white = np.random.randint(2) # White or any color
     if is_white:
@@ -180,7 +192,7 @@ def generate_plot_paper_color():
     
     return paper_color, paper_color_rgba
 
-# Genere points for circle bar chart
+#generating points for circle bar chart with a single color
 def generate_circle_bars_one(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
@@ -213,6 +225,7 @@ def generate_circle_bars_one(data):
         
     return group_points
 
+#generating points for circle bar chart with two colors
 def generate_circle_bars_two(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
@@ -242,6 +255,7 @@ def generate_circle_bars_two(data):
         
     return group_points
 
+#generating points for circle bar chart with three colors
 def generate_circle_bars_three(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
@@ -281,6 +295,7 @@ def generate_circle_bars(data):
     if num_groups == 3:
         return generate_circle_bars_three(data)
 
+#generating styles like the color of the plot, the tick sizes for the axis and the bar gaps
 def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
     (marker_colors, marker_colors_rgba) = generate_marker_colors(num_groups, num_bars)
     (plot_bg_color, plot_bg_color_rgba) = generate_plot_bgcolor()
@@ -307,7 +322,7 @@ def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
     }
     
     return styles
-
+#Plotting the source domain(vertical barcharts) for 512x1024 image dimension i.e. 1:2 ratio
 def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
