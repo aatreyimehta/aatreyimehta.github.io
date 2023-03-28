@@ -1,3 +1,6 @@
+#The purpose of Resize.py is to resize all grayscale/rgb target images to 256x256 dimension and save them with ".tiff" extension as required by the Training model 
+
+#importing python packages
 from PIL import Image
 import math
 import os, sys
