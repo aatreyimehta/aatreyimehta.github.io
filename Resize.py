@@ -2,9 +2,11 @@ from PIL import Image
 import math
 import os, sys
 
-path = "/home/student/Project/Bar Channelwise-RGB Merged(Horizontal)/data/tactile/"
+#folder path
+path = "/home/student/Project/.../data/tactile/"
 dirs = os.listdir( path )
 
+#taking input image and resizing it to square shape with 256x256 pixels
 def make_square(im, min_size=256, fill_color=(255, 255, 255, 255)):
     x, y = im.size
     size = 256
@@ -18,7 +20,7 @@ def resize():
             im = Image.open(path+item)
             x,y = im.size
             f, e = os.path.splitext(path+item)
-            if x == y:
+            if x == y:   #if image is already square but of greater dimension than 256x256, image is resized to 256x56
                 
                 imResize = im.resize((256,256), Image.ANTIALIAS)
                 #imResize.save(f + '.tiff', 'TIFF', quality=90)
@@ -28,7 +30,7 @@ def resize():
                 imResize.save(f + '.tiff','TIFF')
                 print(f)
                 print(e)
-            else:
+            else:   #if the image is rectangular, resize to 256x256
             	if x>y:
             	    ratio = 256/x
             	    x = 256
@@ -39,7 +41,7 @@ def resize():
             	    x = math.floor(x*ratio)
             	im = im.resize((x,y), Image.ANTIALIAS)
             	imResize = make_square(im)
-            	imResize.save(f + '.tiff','TIFF')
+            	imResize.save(f + '.tiff','TIFF')   #final image is stored with a ".tiff" extension
                 
         
 resize()
