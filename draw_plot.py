@@ -268,9 +268,9 @@ if __name__ == "__main__":
     os.makedirs('./tactile1', exist_ok=True)   #creates a tactile1 folder
 
 
-    lim_bezier = opt.cnt_bezier
-    lim_polygon = opt.cnt_bezier + opt.cnt_polygon
-    lim_scatter = opt.cnt_bezier + opt.cnt_polygon + opt.cnt_scatter
+    lim_bezier = opt.cnt_bezier   #max number of curves that will be generated will be equal to the value of opt.cnt_bezier
+    lim_polygon = opt.cnt_bezier + opt.cnt_polygon   #max number of polygons that will be generated will be equal to the value of opt.cnt_bezier and opt.cnt_polygon
+    lim_scatter = opt.cnt_bezier + opt.cnt_polygon + opt.cnt_scatter   #max number of scatter points that will be generated will be equal to the value of opt.cnt_polygon and opt.cnt_scatter
 
     for i in tqdm(range(lim_bezier), desc="bezier curves"):
         clr = "#"+''.join([random.choice('0123456789abcdef') for _ in range(6)])
@@ -288,7 +288,7 @@ if __name__ == "__main__":
         ps = b[0::b.shape[0]//pointidx,:] if pointidx > 0 else None
         draw_pair(clr,opt.p_grid,fig_size, f"{i+1}", bezier=b, scatter=ps)
 
-        
+   #generating plots with different elements like curves, scatter points and polygons with random parameters     
     for i in tqdm(range(lim_bezier, lim_polygon), desc="polygons"):
         clr = "#"+''.join([random.choice('0123456789abcdef') for _ in range(6)])
         fig_size = random.choices([[5,5], [2.5,5], [5,2.5]], weights=opt.p_figsize)[0]
