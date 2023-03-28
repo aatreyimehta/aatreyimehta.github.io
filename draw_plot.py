@@ -1,3 +1,4 @@
+#importing python packages to begin with
 import argparse
 import os
 import random
@@ -19,7 +20,7 @@ np.load = lambda *a,**k: np_load_old(*a, allow_pickle=True, **k)
 
 def draw_pair(color, grid_param=0.4, figsize=(5,5), filename=None, **kwargs):
     grid_p = np.random.rand() 
-    # plot source image
+    #plotting source image
     with plt.style.context('default'):
     
         fig = plt.figure(figsize=figsize)
