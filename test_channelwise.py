@@ -1,3 +1,4 @@
+#importing python packages 
 import argparse
 import os
 import json
@@ -21,12 +22,13 @@ from generators.generators import create_gen
 from datasets.datasets import get_dataset
 from util import mkdir
 
-
+#Opt takes a dictionary as input and converts its key-value pairs to object attributes
 class Opt:
      def __init__(self, dictionary):
         for k, v in dictionary.items():
              setattr(self, k, v)
 
+#load_opt  loads a JSON file from the specified path and returns an Opt instance
 def load_opt(path):
     with open(path) as json_file:
         opt = json.load(json_file)
@@ -34,6 +36,7 @@ def load_opt(path):
     opt = Opt(opt)
     return opt
 
+#load_model loads a generator model from the specified path and returns it
 def load_model(model_path, opt,device):
     gen = create_gen(opt.gen,opt.input_dim,opt.output_dim,multigpu=False)
     gen.to(device)
@@ -48,6 +51,7 @@ def load_data(photo_path,opt, mode='test', shuffle=False):
     dataset = DataLoader(dataset=data, batch_size=1, shuffle=shuffle, num_workers=4)
     return dataset
 
+#loading numpy arrays from various dictionaries
 def load_arrays(path):
     gen_loss = np.load(os.path.join(path, "genloss.npy"))
     disc_loss = np.load(os.path.join(path, "discloss.npy"))
@@ -57,55 +61,17 @@ def load_arrays(path):
     return {"gen":gen_loss, "disc":disc_loss, "l1":l1_loss, "gp":gp_loss, "per": per_loss}
 
 
-#def unnormalize(a):
-    #return a/2 +0.5
-"""    
 def visualize(out):
-    ax_msk = ImageOps.invert(Image.fromarray(out[0]))
-    grid_msk = Image.fromarray(out[1])
-    content_msk = Image.fromarray(out[2])
+    ax_msk = invert(ToPILImage()(out[0]))   #binary mask indicating axis location in the output image
+    grid_msk = ToPILImage()(out[1])   #binary mask indicating grid location in the output image
+    content_msk = ToPILImage()(out[2])   #binary mask indicating content location in the output image
     
-    ax = np.expand_dims(np.array(ax_msk), axis=2)
-    content = np.array(ImageOps.grayscale(content_msk))
-    grid = np.expand_dims(np.array(grid_msk), axis=2)
-
-    blk = np.zeros((256,256,3), dtype=np.uint8)
-    
-    ax = np.concatenate((ax,ax,ax), axis=2)
-    
-    # Create a new grayscale image from the red channel
-    for filename in os.listdir('.'):
-        if filename.endswith('.tiff') or filename.endswith(".png"):
-            img = Image.open(filename)
-            r, g, b = img.split()
-            red_channel = r.point(lambda x: x * 0.5)
-            gray_image = Image.merge('RGB', (red_channel, red_channel, red_channel))
-    
-            # Replace the red channel in the original image with the grayscale image
-            img.paste(gray_image, (0, 0), r)
-            content = np.concatenate((np.array(img), content), axis=2)
-            grid = np.concatenate((blk, grid), axis=2)
-    
-    ax = Image.fromarray(ax)
-    content = Image.fromarray(content)
-    grid = Image.fromarray(grid)
-    
-    ax.paste(grid, (0,0), grid_msk)
-    ax.paste(content, (0,0), content_msk)
-    
-    return ax
-
-    
-"""
-def visualize(out):
-    ax_msk = invert(ToPILImage()(out[0]))
-    grid_msk = ToPILImage()(out[1])
-    content_msk = ToPILImage()(out[2])
-    
+    #ax, content, grid are created from PIL images with extra dimension added
     ax = np.expand_dims(np.array(ax_msk), axis=2)
     content = np.expand_dims(np.array(content_msk), axis=2)
     grid = np.expand_dims(np.array(grid_msk), axis=2)
 
+    #creating a blank array containing all zeros 
     blk = np.zeros((256,256,3), dtype=np.uint8)
     
     ax = np.concatenate((ax,ax,ax), axis=2)
@@ -113,6 +79,7 @@ def visualize(out):
     content = np.concatenate((content, blk), axis=2)
     grid = np.concatenate((blk, grid), axis=2)
     
+    #ax, content, grid are converted back to PIL images
     ax = Image.fromarray(ax)
     content = Image.fromarray(content)
     grid = Image.fromarray(grid)
@@ -120,35 +87,10 @@ def visualize(out):
     ax.paste(grid, (0,0), grid_msk)
     ax.paste(content, (0,0), content_msk)
     
-    return ax
+    return ax   #returning the resulting image
 
 
-"""
-def visualize(out):
-    ax_msk = invert(ToPILImage()(out[0]))
-    grid_msk = ToPILImage()(out[1])
-    content_msk = ToPILImage()(out[2])
-    
-    ax = np.ones((256, 256, 3), dtype=np.uint8) * 255  # initialize with white color
-    content = np.expand_dims(np.array(content_msk), axis=2)
-    grid = np.expand_dims(np.array(grid_msk), axis=2)
-
-    ax[ax_msk == 0] = [0, 0, 0]  # set color of axis to black
-    
-    content[content != 0] = [0, 0, 0]  # set color of circles of content to black
-    
-    grid[grid != 0] = [0, 0, 0]  # set color of grid to black
-    
-    ax = Image.fromarray(ax)
-    content = Image.fromarray(content)
-    grid = Image.fromarray(grid)
-    
-    ax.paste(grid, (0,0), grid_msk)
-    ax.paste(content, (0,0), content_msk)
-    
-    return ax
-"""
-
+#concatenating horizontally or vertically based on mode parameter
 def concat_images(*photos, mode="h"):
     #torch.cat((photo,sketch,output),2)
     if mode=="h":
@@ -162,6 +104,7 @@ def concat_images(*photos, mode="h"):
 
     return res
 
+#saving a plot of the losses during training
 def save_plot(loss_dict, opt):
 	x = np.array(range(opt.epoch_count, opt.epoch_count+opt.total_iters))
 	legends = loss_dict.keys()
@@ -172,6 +115,7 @@ def save_plot(loss_dict, opt):
 	plt.ylabel("loss")
 	plt.savefig(os.path.join(os.getcwd(),"models",opt.folder_load,"loss.png"))
 
+#evaluating PyTorch model on a given dataset and computing the pixel accuracy, Dice coefficient, and Jaccard index
 def eval_model(model, dataset, path):
     jaccard = []
     dice = []
@@ -232,9 +176,9 @@ def save_images(model, dataset, path):
             out = model(real_A.to(device)).cpu()
 
         #a = unnormalize(real_A[0])
-        a = real_A[0]
-        b = real_B[0]
-        out = out[0]
+        a = real_A[0]   #source image
+        b = real_B[0]   #target image
+        out = out[0]   #output of trained data
         
         # numerical log
         # np.savetxt(os.path.join(path,f"e_{i+1}.txt"), a[2].numpy())
@@ -256,16 +200,16 @@ def save_images(model, dataset, path):
         # concat_images(ToPILImage()(a), b_img, out_img).save(os.path.join(path,f"sgt_{i+1}.png"))
         # save_image(concat_images(a, b_img, out_img), os.path.join(path,f"e_{i+1}.png"))
         # save_image(torch.cat((b_elements, out_elements), 1), os.path.join(path,f"e_{i+1}_elements.png")) 
-        empty_image = Image.new('RGB', (256, 256), color='white')
-        a_elements = concat_images(empty_image, ToPILImage()(a[0]), empty_image)
+        empty_image = Image.new('RGB', (256, 256), color='white')   #an empty white image
+        a_elements = concat_images(empty_image, ToPILImage()(a[0]), empty_image)   
         b_elements = concat_images(ToPILImage()(b[0]), ToPILImage()(b[1]), ToPILImage()(b[2]))
         out_elements = concat_images(ToPILImage()(out[0]), ToPILImage()(out[1]), ToPILImage()(out[2]))
-        concat_images(a_elements, b_elements,out_elements, mode="v").save(os.path.join(path,f"elm_{i+1}.png"))
+        concat_images(a_elements, b_elements,out_elements, mode="v").save(os.path.join(path,f"elm_{i+1}.png"))   #vertically concatenating source, target and output together
         # print(f"file x_{i+1}.png saved.")
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--folder", default="pix2obj", help="The folder path including params.txt")
+    parser.add_argument("--folder", default="pix2obj", help="The folder path including params.txt")  
     opt = parser.parse_args()
 
     opt_path = os.path.join(os.getcwd(),"models", opt.folder.split("/")[-1], "params.txt")
@@ -287,13 +231,13 @@ if __name__=='__main__':
     eval_model(gen, dataset,output_path)
     save_images(gen, dataset,output_path)
 
-    # Convert all images in pix2obj folder to grayscale
+    # Set the pix2obj path as input directory
     input_directory = "/home/student/Project/Pix2Pix-obj (copy 1)/Outputs/pix2obj/"
     
-    # Set the directory path to save the output images
+    # Set the pix2obj directory path to save the output images
     output_directory = "/home/student/Project/Pix2Pix-obj (copy 1)/Outputs/pix2obj/"
     
-    # Loop through all files in the input directory
+    # Loop through all files in the input directory to convert all images in to grayscale
     for filename in os.listdir(input_directory):
     	if filename.endswith(".tiff") or filename.endswith(".png"):
     		# Open the image file
