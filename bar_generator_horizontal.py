@@ -230,7 +230,7 @@ def generate_circle_bars_one(data):
         
     return group_points
 
-#generating points for circle bar chart with a two colors
+#generating points for circle bar chart with two colors
 def generate_circle_bars_two(data):
     num_bars = len(data["x_values"])
     num_groups = len(data["y_values"])
