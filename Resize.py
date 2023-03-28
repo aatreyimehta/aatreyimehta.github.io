@@ -1,4 +1,5 @@
 #The purpose of Resize.py is to resize all grayscale/rgb target images to 256x256 dimension and save them with ".tiff" extension as required by the Training model 
+#Note: First run Resize.py and then run RemovePng.py on all the tactile1 folders.
 
 #importing python packages
 from PIL import Image
@@ -6,7 +7,7 @@ import math
 import os, sys
 
 #folder path
-path = "/home/student/Project/.../data/tactile/"
+path = "/home/student/Project/.../data/tactile1/"
 dirs = os.listdir( path )
 
 #taking input image and resizing it to square shape with 256x256 pixels
