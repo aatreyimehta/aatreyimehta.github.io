@@ -325,13 +325,15 @@ def generate_styles(num_bars, num_groups, min_x, max_x, min_y, max_y):
 #Plotting the source domain(vertical barcharts) for 512x1024 image dimension i.e. 1:2 ratio
 def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, tick_step=10):
 
-    linewidth = random.uniform(1,5)
+    linewidth = random.uniform(1,5)   #generating linewidth of random thickness for every image
     
+    #initializing word, that selects random string of alphabets every time
     alphabet = string.ascii_lowercase
     word = ''.join(random.choice(alphabet) for i in range(randint(2,3)))
     
     fig = go.Figure()
 
+    #setting the x and y values for vertical barchart
     for r in range(len(data["y_values"])):
         fig.add_trace(go.Bar(x=data["x_values"],
                         y=data["y_values"][r],
@@ -347,19 +349,21 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
         plot_bgcolor=data["plot_bg_color_rgba"],
         width=figsize[0], height=figsize[1],
         #title=random.choice(open("randomFile.txt","r").readline().split()),
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
-        xaxis_title=random.choice(open("label.txt","r").readline().split()),
-        yaxis_title=random.choice(open("label.txt","r").readline().split()),
+        yaxis_range=[0,110],   #setting same range for y axis as source images
+        xaxis_range=[-0.5,10],   #setting same range for x axis as source images
+        xaxis_title=random.choice(open("label.txt","r").readline().split()),   #randomly selecting a word from file label.txt for xaxis title
+        yaxis_title=random.choice(open("label.txt","r").readline().split()),   #randomly selecting a word from file label.txt for yaxis title
         bargap=data["bargap"],
         bargroupgap=data["bargroupgap"],
         showlegend=True,
+        #setting x axis properties
         xaxis={
                 "showline": True, 
                 #"linewidth": (randint(1,5)), 
                 "linewidth": linewidth,
                 "linecolor": 'black',
             },
+        #setting y axis properties
         yaxis={
                 "showline": True, 
                 #"linewidth": (randint(1,5)), 
@@ -379,11 +383,12 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
     with open("y.txt","r") as f:
     	y_options = f.readline().split()
                    	
+    #layout for legend
     fig.update_layout(legend=dict(
-    	orientation=random.choice(open("orientation.txt","r").readline().split()),
-    	font_family=random.choice(open("font.txt","r").readline().split()),
-    	x=float(random.choice(x_options)),
-    	y=float(random.choice(y_options))
+    	orientation=random.choice(open("orientation.txt","r").readline().split()),   #randomly selecting an orientation from file orientation.txt
+    	font_family=random.choice(open("font.txt","r").readline().split()),   #randomly selecting a font from file font.txt for the plot
+    	x=float(random.choice(x_options)),   #selects an x anchor positioning for legend from file x.txt
+    	y=float(random.choice(y_options))   #selects a y anchor positioning for legend from file x.txt
     	#yanchor=random.choice(open("yanchor.txt","r").readline().split()),
     	#xanchor=random.choice(open("xanchor.txt","r").readline().split())
     ))
@@ -391,7 +396,7 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
     
     alphabet = string.ascii_lowercase
 
-    ticktext = []
+    ticktext = []   #initializing tick text for ticks
     for i in range(10):
     	word = ''.join(random.choice(alphabet) for i in range(randint(2,4)))
     	ticktext.append(word)
@@ -399,8 +404,8 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
     fig.update_layout(
     	xaxis = dict(
     	tickmode = 'array',
-    	tickvals = [0,1,2,3,4,5,6,7,8,9],
-    	ticktext = ticktext,
+    	tickvals = [0,1,2,3,4,5,6,7,8,9],   #positions of the tick step
+    	ticktext = ticktext,   #selecting random strings of alphabets by referring to the ticktext defined before fig.update_layout()
         #ticktext =[random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()), random.choice(open("legend.txt","r").readline().split()),]
     	
     ))  
@@ -413,16 +418,17 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
     
     fig.update_layout(
     	font=dict(
-    		size=random.randint(13,22),
-    		family=random.choice(open("font.txt","r").readline().split())
+    		size=random.randint(13,22),   #selecting random size for fonts for the plots
+    		family=random.choice(open("font.txt","r").readline().split())   #selecting random font family for the plot from font.txt
     		)
     	)
-    	
+    
+    #layout for the chart title
     fig.update_layout(
-    	title_text=random.choice(open("randomFile.txt","r").readline().split()),
+    	title_text=random.choice(open("randomFile.txt","r").readline().split()),   #chart title is selected randomly from randomFile.txt 
     	title_x=random.uniform(0.0,0.9),
-    	title_font_size=random.randint(25,35),
-    	margin={'t':50, 'b':50, 'l':1}, #so that the whole title is visible
+    	title_font_size=random.randint(25,35),   #size of title font
+    	margin={'t':50, 'b':50, 'l':1},   #adjusted so that the whole title is visible
     	title_font_family=random.choice(open("font.txt","r").readline().split())
     		) 
     
@@ -433,16 +439,18 @@ def write_source_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, ti
     #plt.ylabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))  
 
 
+    #properties to be included if grids are produced
     fig.update_yaxes(showgrid=False)
     if draw_grid:
         fig.update_yaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
     #elif plot_bgcolor == 'white':
     	#fig.update_yaxes(showgris=True, gridcolor='#000000', gridwidth=1)
 
+    #saving the plot as an image file
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
 
-    
+#Plotting channelwise target images for 512x1024 image dimension i.e. 1:2 ratio
 def write_circle_target_data_2(data, filepath, figsize=(512, 1024), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -451,7 +459,7 @@ def write_circle_target_data_2(data, filepath, figsize=(512, 1024), draw_grid=Fa
                         y=data[i][j]["y"],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),          
             "sizemode":'diameter',
-            "sizeref": 0.72,
+            "sizeref": 0.72,   #size reference for 512x1024 images
                                  },
                         ))
 
@@ -463,24 +471,29 @@ def write_circle_target_data_2(data, filepath, figsize=(512, 1024), draw_grid=Fa
         plot_bgcolor="white",
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
+        yaxis_range=[0,110],   #range of y axis
+        xaxis_range=[-0.5,10],   #range of x axis
+        #setting x and y axis parameters 
         xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black'},
         yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": tick_step, "ticklen": 10, "tickwidth": 2},
         showlegend=False
     )    
+    #saving the axes part as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_axes.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
+    #defining grid properties for when grids are produced
     if draw_grid:
         fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dash', gridwidth=1)
     fig.update_layout(xaxis={"linecolor": 'white'}, yaxis={"linecolor": 'white', "ticklen": 0, "tickwidth": 0})
+    #saving the grid part as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_grids.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
 
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     fig.update_layout(yaxis={"showgrid":False})
+    #saving the bar content an an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-
+#Plotting grayscale target images for 512x1024 dimension
 def write_circle_target_data1_2(data, filepath, figsize=(512, 1024), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -489,7 +502,7 @@ def write_circle_target_data1_2(data, filepath, figsize=(512, 1024), draw_grid=F
                         y=data[i][j]["y"],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),          
             "sizemode":'diameter',
-            "sizeref": 0.72,
+            "sizeref": 0.72,   #size reference for 512x1024 image dimension
                                  },
                         ))
                                              
@@ -501,8 +514,9 @@ def write_circle_target_data1_2(data, filepath, figsize=(512, 1024), draw_grid=F
         plot_bgcolor="white",
         margin=dict(l=30, r=30, t=30, b=30),
         width=figsize[0], height=figsize[1],
-        yaxis_range=[0,110],
-        xaxis_range=[-0.5,10],
+        yaxis_range=[0,110],   #setting same y axis range as source for the target images
+        xaxis_range=[-0.5,10],   #setting same x axis range as source for the target images
+        #setting axis properties for x and y axis
         xaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black'},
         yaxis={"showticklabels": False, "linewidth": 2, "linecolor": 'black', "ticks": "outside", "dtick": tick_step, "ticklen": 0, "tickwidth": 0, "ticklen": 10, "tickwidth": 2, "showgrid":False},
         showlegend=False
@@ -512,8 +526,10 @@ def write_circle_target_data1_2(data, filepath, figsize=(512, 1024), draw_grid=F
     fig.update_traces(mode='markers', marker_line_width=2, marker_color="white", marker_line_color="black", visible=True)
     if draw_grid:
     	fig.update_yaxes(showgrid=True, gridcolor='black', griddash='dot', gridwidth=1)
+    #saving the rgb/grayscale output as an image
     pio.write_image(fig=fig, file=f"{fp_parts[0]}.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
-    
+
+#Plotting source domain for 512x760 image dimension(1:1.5 ratio) for vertical barcharts(all the source properties remain the same as 512x1024 image dimension, except for size reference for target images)
 def write_source_data_3(data, filepath, figsize=(512, 760), draw_grid=False, tick_step=10):
 
     linewidth = random.uniform(1,5)
@@ -627,7 +643,7 @@ def write_source_data_3(data, filepath, figsize=(512, 760), draw_grid=False, tic
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
     #plt.show()
 
-    
+#Plotting channelwise target image for 512x760 image dimension   
 def write_circle_target_data_3(data, filepath, figsize=(512, 760), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
@@ -636,7 +652,7 @@ def write_circle_target_data_3(data, filepath, figsize=(512, 760), draw_grid=Fal
                         y=data[i][j]["y"],
                         marker = {"size":np.array(data[i][j]["widths"])*np.sqrt(figsize[1]/figsize[0]),          
             "sizemode":'diameter',
-            "sizeref": 0.85,
+            "sizeref": 0.85,   #size reference for 1:1.5 dimension
                                  },
                         ))
 
@@ -665,7 +681,7 @@ def write_circle_target_data_3(data, filepath, figsize=(512, 760), draw_grid=Fal
     fig.update_layout(yaxis={"showgrid":False})
     pio.write_image(fig=fig, file=f"{fp_parts[0]}_content.{fp_parts[1]}", format="png", width=figsize[0], height=figsize[1])
     
-
+#Plotting rgb/grayscale target image for 512x760 image dimension   
 def write_circle_target_data1_3(data, filepath, figsize=(512, 760), draw_grid=False, tick_step=10):
     fig = go.Figure()
     for i in range(len(data)):
