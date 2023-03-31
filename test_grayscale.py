@@ -57,7 +57,7 @@ def save_images(dataset,path):
         b = unnormalize(real_B[0])   #unnormalized target image
         out = unnormalize(out)      #unnormalized output image
         
-        file_name = str(i+1) +".png"   #saving the concatenated output as an image
+        file_name = str(i+1) +".png"   #filename of the saved images
         save_image(concat_images(a,b,out), os.path.join(path,file_name))   #horizontally concatenated source, target and trained output images
         print(f"file saved at: {os.path.join(path,file_name)}")
 
