@@ -39,10 +39,8 @@ def load_data(photo_path,opt):
     dataset = DataLoader(dataset=data, batch_size=1, shuffle=False,num_workers=4)
     return dataset
 
-#unnormalization of source image
-def unnormalize(a):
+def unnormalize(a):  #unnormalization of input tensor
     return a/2 +0.5
-
 
 def concat_images(photo,sketch,output):
 
@@ -58,7 +56,6 @@ def save_images(dataset,path):
         a = unnormalize(real_A[0])   #unnormalized source image
         b = unnormalize(real_B[0])   #unnormalized target image
         out = unnormalize(out)      #unnormalized output image
-        
         
         file_name = str(i+1) +".png"   #saving the concatenated output as an image
         save_image(concat_images(a,b,out), os.path.join(path,file_name))   #horizontally concatenated source, target and trained output images
