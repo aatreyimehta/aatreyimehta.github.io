@@ -430,24 +430,16 @@ def write_source_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_
     	margin={'t':50, 'b':50, 'l':1},   #adjusted so that the whole title is visible
     	title_font_family=random.choice(open("font.txt","r").readline().split())
     		) 
-    
-    		    	
-        
-    #plt.title(random.choice(open("randomFile.txt","r").readline().split()), fontsize = random.randint(11,18))
-    #plt.xlabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))
-    #plt.ylabel(random.choice(open("myFile.txt","r").readline().split()), fontsize = random.randint(10,15))  
-
+  
 
     #properties to be included if grids are produced
     fig.update_yaxes(showgrid=False)
     if draw_grid:
         fig.update_yaxes(showgrid=True, gridcolor='#aaaaaa', gridwidth=1, griddash=random.choice(open("grid.txt","r").readline().split()))
-    #elif plot_bgcolor == 'white':
-    	#fig.update_yaxes(showgris=True, gridcolor='#000000', gridwidth=1)
 
     #saving the plot as an image file
     pio.write_image(fig=fig, file=filepath, format="png", width=figsize[0], height=figsize[1])
-    #plt.show()
+
 
 #Plotting channelwise target images for 512x512 image dimension    
 def write_circle_target_data(data, filepath, figsize=(512, 512), draw_grid=False, tick_step=10):
