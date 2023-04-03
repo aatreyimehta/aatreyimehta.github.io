@@ -39,8 +39,8 @@ SIZEREFS = {"1": 7.0, "2": 2.5 , "3": 2.0}
 
 #generating random data used to plot bar charts
 def generate_metadata(min_y = 0, max_y = 100):
-    num_bars = 5
-    x = list(range(1, num_bars*2, 2)) # Generate x values only for odd ticks to maintain bar gaps for tall and narrow width bar charts
+    num_bars = 5   #reduced number of bars
+    x = list(range(1, num_bars*2, 2))   #this line will skip every second number while generating bars
     
     num_groups = np.random.randint(low=1, high=1+1)
     
