@@ -234,33 +234,3 @@ if __name__=='__main__':
     		# Save the black and white image in the output directory
     		output_path = os.path.join(output_directory, filename)
     		gray_image.save(output_path)
-
-
-
-"""
-if __name__=='__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--folder", default="pix2obj", help="The folder path including params.txt")
-    opt = parser.parse_args()
-
-    opt_path = os.path.join(os.getcwd(),"models", opt.folder.split("/")[-1], "params.txt")
-    opt = load_opt(opt_path)
-    device = torch.device("cuda:0")
-
-    model_path = os.path.join(os.getcwd(),"models",opt.folder_load,"final_model.pth")
-    gen = load_model(model_path,opt,device)
-
-    photo_path_test= os.path.join(os.getcwd(),opt.data,"test","source")
-    dataset = load_data(photo_path_test,opt, shuffle=False)
-
-    loss_path = os.path.join(os.getcwd(), "models", opt.folder_load)
-    losses = load_arrays(loss_path)
-    save_plot(losses, opt)
-
-    output_path = os.path.join(os.getcwd(),"Outputs",opt.folder_save)
-    mkdir(output_path)
-    eval_model(gen, dataset,output_path)
-    save_images(gen, dataset,output_path)
-
-
-"""
