@@ -180,26 +180,11 @@ def save_images(model, dataset, path):
         b = real_B[0]   #target image
         out = out[0]   #output of trained data
         
-        # numerical log
-        # np.savetxt(os.path.join(path,f"e_{i+1}.txt"), a[2].numpy())
-        # print(f"Out => min:{b.numpy().min()} max:{b.numpy().max()} avg:{b.numpy().mean()} std:{b.numpy().std()}")
-        # print(f"Fake => min:{real_B[0].numpy().min()} max:{real_B[0].numpy().max()} avg:{real_B[0].numpy().mean()} std:{real_B[0].numpy().std()}")
-        
-        # visual log
-        # plt.figure(figsize=(10,7))
-        # sns.distplot(b[0].numpy(),label="ch_0")
-        # sns.distplot(b[1].numpy(),label="ch_1")
-        # sns.distplot(b[2].numpy(),label="ch_2")
-        # plt.legend()
-        # plt.savefig(os.path.join(path,f"e_pdf_{i+1}.png"))
         a_img = visualize(a)
         b_img = visualize(b)
         out_img = visualize(out)
         
         out_img.save(os.path.join(path,f"o_{i+1}.png"))
-        # concat_images(ToPILImage()(a), b_img, out_img).save(os.path.join(path,f"sgt_{i+1}.png"))
-        # save_image(concat_images(a, b_img, out_img), os.path.join(path,f"e_{i+1}.png"))
-        # save_image(torch.cat((b_elements, out_elements), 1), os.path.join(path,f"e_{i+1}_elements.png")) 
         empty_image = Image.new('RGB', (256, 256), color='white')   #an empty white image
         a_elements = concat_images(empty_image, ToPILImage()(a[0]), empty_image)   
         b_elements = concat_images(ToPILImage()(b[0]), ToPILImage()(b[1]), ToPILImage()(b[2]))
